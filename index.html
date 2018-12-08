@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+        crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+    <title>Giphy Search</title>
+</head>
+
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <div class="jumbotron">
+        <div class="container">
+            <img src="images/theoffice.png" width="400px">
+            <h2 class="display-4"> Employee Search</h2>
+            <hr class="my-4">
+        </div>
+
+        <div id="buttons">
+
+        </div>
+        <br>
+    
+        <div class="row">
+            <div class="col-xs-4">
+                <div class="form-group">
+                    <label for="search">Add an Employee</label>
+                    <input id="searchText" type="text" class="form-control" placeholder="Search Here">
+                </div>
+                <input id="submitButton" value="submit" type="submit" class="btn btn-danger btn-md"></input>
+            </div>
+        </div>
+
+    </div>
+    <div class="col-xs-8">
+        <div id="gifs-show-here">
+        </div>
+    </div>
+
+
+</body>
+
+<script>
+    var topics = ["Michael Scott", "Dwight Schrute", "Jim Halpert", "Pam Beasley"];
+
+    for (var i = 0; i < topics.length; i++) {
+        var gifButton = $("<button>");
+        gifButton.addClass("btn btn-info btn-md");
+        gifButton.attr("data-name", topics[i]);
+        gifButton.text(topics[i]);
+        $("#buttons").append(gifButton);
+
+    }
+
+    var gifList = [];
+
+    $("#submitButton").on("click", function () {
+        event.preventDefault();
+
+        var userInput = $("#searchText").val().trim();
+
+        gifList.push(userInput);
+
+
+        console.log(gifList);
+
+        var gifButton = $("<button>");
+
+        gifButton.attr("data-name", userInput);
+        gifButton.addClass("btn btn-info btn-md");
+        gifButton.append(userInput);
+
+
+        $("#buttons").append(gifButton);
+
+    });
+
+    $("body").on("click", "button", function () {
+        $("#gifs-show-here").empty();
+
+        var person = $(this).attr("data-name");
+        var queryURL = "https://api.giphy.com/v1/gifs/search?q=" +
+            person + "&api_key=Tsd55Agvuh2oJWRShkoHEFMD6FzFV2YM&limit=10";
+
+        $.ajax({
+            url: queryURL,
+            method: "GET"
+        })
+
+            .done(function (response) {
+                var results = response.data;
+                console.log(results);
+
+                for (var i = 0; i < results.length; i++) {
+                    var gifDiv = $("<div class='item'>");
+
+                    var rating = results[i].rating;
+
+                    var p = $("<p>").text("Rating: " + rating);
+
+                    var personImage = $("<img>");
+                    personImage.attr("src", results[i].images.original.url);
+                    personImage.addClass("gifImages");
+                    personImage.attr("data-animate", results[i].images.original.url);
+                    personImage.attr("data-still", results[i].images.original_still.url);
+                    personImage.attr("data-state", "still");
+
+
+                    gifDiv.prepend(p);
+                    gifDiv.prepend(personImage);
+
+                    $("#gifs-show-here").prepend(gifDiv);
+                }
+            });
+    });
+    $(document).on("click", ".gifImages", function () {
+
+        var state = $(this).attr("data-state");
+        if (state === "still") {
+            console.log("animate");
+            $(this).attr("src", $(this).attr("data-animate"));
+            $(this).attr("data-state", "animate");
+        } else {
+            console.log("still");
+            $(this).attr("src", $(this).attr("data-still"));
+            $(this).attr("data-state", "still");
+        }
+    });
+
+</script>
+
+</html>

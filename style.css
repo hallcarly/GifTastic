@@ -1,0 +1,25 @@
+img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
+h2 {
+    margin: 20px;
+    text-align: center;
+}
+
+.buttons {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.btn btn-info btn-lg {
+    margin: 5px;
+}
+
+p {
+    text-align: center;
+}
